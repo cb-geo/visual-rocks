@@ -27,10 +27,10 @@ vtkBlocks = VtkFile("./blocks", VtkPolyData)
 
 for i in range(0, len(data) - 1): 
     # Extract data for vtk file creation
-    npoints = data(i).vertexCount
+    npoints = len(data(i).vertices)
     pointIDs = data(i).vertexIDs
     vertices = data(i).vertices
-    npolys = data(i).blockCount
+    npolys = data(i).faceCount
     normals = data(i).normals
     connectivity = data(i).connectivity
     offsets = data(i).offsets
