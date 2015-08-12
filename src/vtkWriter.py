@@ -19,25 +19,33 @@ class JSONObject:
 # Process command line arguments:
 inputFile = str(sys.argv[1])
 
-with open(inputFile, 'r') as f:
-    data = json.load(f, object_hook = JSONObject)
+data = []
+
+with open (inputFile, 'r') as f:
+    for line in f:       
+        data.append(json.loads(line, object_hook = JSONObject))
+
+# with open(inputFile, 'r') as f:
+#     data = json.load(f, object_hook = JSONObject)
 
 # Initialize vtk file
 vtkBlocks = VtkFile("./blocks", VtkPolyData)
 
+print len(data)
+
 for i in range(0, len(data) - 1): 
     # Extract data for vtk file creation
-    npoints = len(data(i).vertices)
-    pointIDs = data(i).vertexIDs
-    vertices = data(i).vertices
-    npolys = data(i).faceCount
-    normals = data(i).normals
-    connectivity = data(i).connectivity
-    offsets = data(i).offsets
+    npoints = len(data[i].vertices)
+    pointIDs = np.asarray(data[i].vertexIDs)
+    vertices = np.asarray(data[i].vertices)
+    npolys = np.asarray(data[i].faceCount)
+    normals = np.asarray(data[i].normals)
+    connectivity = np.asarray(data[i].connectivity)
+    offsets = np.asarray(data[i].offsets)
     
     vtkBlocks.openPiece(start = None, end = None,
-                        npoints, ncells = None, nverts = None,
-                        nlines = None, nstrips = None, npolys)
+                        npoints = npoints, ncells = None, nverts = None,
+                        nlines = None, nstrips = None, npolys = npolys)
     
     # Point data
     vtkBlocks.openElement("Points")
