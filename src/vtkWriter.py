@@ -29,8 +29,6 @@ with open (inputFile, 'r') as f:
 vtkBlocks = VtkFile("./blocks", VtkPolyData)
 vtkBlocks.openElement("PolyData")
 
-print len(data)
-
 for i in range(0, len(data)): 
     # Extract data for vtk file creation
     npoints = len(data[i].vertexIDs)
@@ -41,14 +39,6 @@ for i in range(0, len(data)):
     connectivity = np.asarray(data[i].connectivity)
     offsets = np.asarray(data[i].offsets)
     cellIDs = np.arange(0, npolys)
-    print "Vertices: " 
-    print vertices
-    print "Connectivity: " 
-    print connectivity
-    print "Offsets: " 
-    print offsets
-    print "Normals:"
-    print normals
     
     vtkBlocks.openPiece(start = None, end = None,
                         npoints = npoints, ncells = None, nverts = None,
@@ -58,9 +48,6 @@ for i in range(0, len(data)):
     vtkBlocks.openElement("Points")
     vtkBlocks.addHeader("points", vertices.dtype.name, len(pointIDs), 3)
     vtkBlocks.closeElement("Points")
-    # vtkBlocks.openElement("Points")
-    # vtkBlocks.addData("points", vertices)
-    # vtkBlocks.closeElement("Points")
     vtkBlocks.openData("Point", scalars = "pointIDs")
     vtkBlocks.addData("pointIDs", pointIDs)
     vtkBlocks.closeData("Point")
@@ -69,7 +56,6 @@ for i in range(0, len(data)):
     vtkBlocks.openData("Cell", scalars = "cellIDs", normals = "normals")
     vtkBlocks.addHeader("cellIDs", cellIDs.dtype.name, npolys, 1)
     vtkBlocks.addHeader("normals", normals.dtype.name, npolys, 3)
-    # vtkBlocks.addData("normals", normals)
     vtkBlocks.closeData("Cell")
     
     # Poly data
@@ -98,7 +84,8 @@ for i in range(0, len(data)):
     vtkBlocks.appendData(pointIDs)
     vtkBlocks.appendData(cellIDs)
     vtkBlocks.appendData(normals)
-    vtkBlocks.appendData(connectivity).appendData(offsets)
+    vtkBlocks.appendData(connectivity)
+    vtkBlocks.appendData(offsets)
 
 # Save vtk file
 vtkBlocks.save()
