@@ -1,5 +1,2 @@
-blocks.json
-oneBlock.json
-twoBlocks.json
-blocks.vtp
-1000Blocks.json
+*.json
+*.vtp
