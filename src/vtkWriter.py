@@ -1,14 +1,14 @@
 #!/usr/bin/python
-from evtk.vtk import VtkFile, VtkPolyData
+from pyevtk.vtk import VtkFile, VtkPolyData
 import sys
 import numpy as np
 import json
 from pprint import pprint
 
-# This script reads in JSON objects from the specified input file and 
-# writes them to a xml polygon vtk file. 
+# This script reads in JSON objects from the specified input file and
+# writes them to a xml polygon vtk file.
 
-# First command line argument: Input File (List of coordinates for all vertices, 
+# First command line argument: Input File (List of coordinates for all vertices,
 #                                          block data: normals and connectivity for all faces)
 
 # Defines function to read in JSON objects from input file
@@ -17,19 +17,22 @@ class JSONObject:
         self.__dict__ = d
 
 # Process command line arguments:
+if len(sys.argv) != 2:
+    print "Usage: {} <inputFile>".format(sys.argv[0])
+    sys.exit(1)
 inputFile = str(sys.argv[1])
 
 data = []
 
 with open (inputFile, 'r') as f:
-    for line in f:       
+    for line in f:
         data.append(json.loads(line, object_hook = JSONObject))
 
 # Initialize vtk file and open polygon data
 vtkBlocks = VtkFile("./blocks", VtkPolyData)
 vtkBlocks.openElement("PolyData")
 
-for i in range(0, len(data)): 
+for i in range(0, len(data)):
     # Extract data for vtk file creation
     npoints = len(data[i].vertexIDs)
     pointIDs = np.asarray(data[i].vertexIDs)
@@ -39,11 +42,11 @@ for i in range(0, len(data)):
     connectivity = np.asarray(data[i].connectivity)
     offsets = np.asarray(data[i].offsets)
     cellIDs = np.arange(0, npolys)
-    
+
     vtkBlocks.openPiece(start = None, end = None,
                         npoints = npoints, ncells = None, nverts = None,
                         nlines = None, nstrips = None, npolys = npolys)
-    
+
     # Point data
     vtkBlocks.openElement("Points")
     vtkBlocks.addHeader("points", vertices.dtype.name, len(pointIDs), 3)
@@ -57,20 +60,20 @@ for i in range(0, len(data)):
     vtkBlocks.addHeader("cellIDs", cellIDs.dtype.name, npolys, 1)
     vtkBlocks.addHeader("normals", normals.dtype.name, npolys, 3)
     vtkBlocks.closeData("Cell")
-    
+
     # Poly data
     vtkBlocks.openElement("Polys")
     vtkBlocks.addData("connectivity", connectivity)
     vtkBlocks.addData("offsets", offsets)
     vtkBlocks.closeElement("Polys")
-    
+
     vtkBlocks.closePiece()
 
 # Close polygon data
 vtkBlocks.closeElement("PolyData")
 
 # Append data for each polygon
-for i in range(0, len(data)): 
+for i in range(0, len(data)):
     # Extract data for each piece
     pointIDs = np.asarray(data[i].vertexIDs)
     vertices = np.asarray(data[i].vertices)
