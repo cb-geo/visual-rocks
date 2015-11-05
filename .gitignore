@@ -2,7 +2,7 @@
 *.vtp
 *.swp
 *~
-/build/
-/dist/
-/rockProcessor.egg-info/
+build/
+dist/
+rockProcessor.egg-info/
 part-*
