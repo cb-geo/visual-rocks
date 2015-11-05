@@ -41,7 +41,6 @@ for i in range(0, len(data)):
     normals = np.asarray(data[i].normals)
     connectivity = np.asarray(data[i].connectivity)
     offsets = np.asarray(data[i].offsets)
-    cellIDs = np.arange(0, npolys)
 
     vtkBlocks.openPiece(start = None, end = None,
                         npoints = npoints, ncells = None, nverts = None,
@@ -52,19 +51,21 @@ for i in range(0, len(data)):
     vtkBlocks.addHeader("points", vertices.dtype.name, len(pointIDs), 3)
     vtkBlocks.closeElement("Points")
     vtkBlocks.openData("Point", scalars = "pointIDs")
-    vtkBlocks.addData("pointIDs", pointIDs)
+    # vtkBlocks.addData("pointIDs", pointIDs)
+    vtkBlocks.addHeader("pointIDs", pointIDs.dtype.name, len(pointIDs), 1)
     vtkBlocks.closeData("Point")
 
     # Cell data
-    vtkBlocks.openData("Cell", scalars = "cellIDs", normals = "normals")
-    vtkBlocks.addHeader("cellIDs", cellIDs.dtype.name, npolys, 1)
+    vtkBlocks.openData("Cell",  normals = "normals")
     vtkBlocks.addHeader("normals", normals.dtype.name, npolys, 3)
     vtkBlocks.closeData("Cell")
 
     # Poly data
     vtkBlocks.openElement("Polys")
-    vtkBlocks.addData("connectivity", connectivity)
-    vtkBlocks.addData("offsets", offsets)
+    vtkBlocks.addHeader("connectivity", connectivity.dtype.name, len(connectivity), 1)
+    vtkBlocks.addHeader("offsets", offsets.dtype.name, len(offsets), 1)
+    # vtkBlocks.addData("connectivity", connectivity)
+    # vtkBlocks.addData("offsets", offsets)
     vtkBlocks.closeElement("Polys")
 
     vtkBlocks.closePiece()
@@ -80,12 +81,10 @@ for i in range(0, len(data)):
     normals = np.asarray(data[i].normals)
     connectivity = np.asarray(data[i].connectivity)
     offsets = np.asarray(data[i].offsets)
-    cellIDs = np.arange(0, npolys)
 
     # Append data
     vtkBlocks.appendData(vertices)
     vtkBlocks.appendData(pointIDs)
-    vtkBlocks.appendData(cellIDs)
     vtkBlocks.appendData(normals)
     vtkBlocks.appendData(connectivity)
     vtkBlocks.appendData(offsets)
