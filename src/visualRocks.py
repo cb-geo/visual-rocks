@@ -10,6 +10,7 @@ from pprint import pprint
 
 # First command line argument: Input File (List of coordinates for all vertices,
 #                                          block data: normals and connectivity for all faces)
+# Second command line argument: Output File Name (DO NOT include file extension)
 
 # Defines function to read in JSON objects from input file
 class JSONObject:
@@ -17,10 +18,11 @@ class JSONObject:
         self.__dict__ = d
 
 # Process command line arguments:
-if len(sys.argv) != 2:
-    print "Usage: {} <inputFile>".format(sys.argv[0])
+if len(sys.argv) != 3:
+    print "Usage: {} <inputFile> <output file name without file extension>".format(sys.argv[0])
     sys.exit(1)
 inputFile = str(sys.argv[1])
+outputFile = "./" + str(sys.argv[2])
 
 data = []
 
@@ -29,7 +31,7 @@ with open (inputFile, 'r') as f:
         data.append(json.loads(line, object_hook = JSONObject))
 
 # Initialize vtk file and open polygon data
-vtkBlocks = VtkFile("./blocks", VtkPolyData)
+vtkBlocks = VtkFile(outputFile, VtkPolyData)
 vtkBlocks.openElement("PolyData")
 
 for i in range(0, len(data)):
